@@ -89,8 +89,8 @@ table t_matricula{
   matr_anio datetime [not null]
   matr_grado int(11) [ not null]
 
-  matr_repite bool [ not null]
-  matr_traslado  bool[not null]
+  matr_repite boollean [ not null]
+  matr_traslado  boolean [not null]
   matr_estado matricula_estado [not null]
   matr_observaciones text
   matr_jornada jornada   [not null]
@@ -171,7 +171,7 @@ table t_grado{
 }
 
 table t_rel_empleado_asignatura_curso{
-id_rel_empleado_asignatura_curso int(11) [pk, not null]
+id_rel_empleado_asignatura_curso int(11) [pk, not null, increment]
 id_asignatura int(11) [ note: "fk de t_asignatura", not null]
 id_curso  int(11) [ note: "fk de t_curso", not null]
 id_documento_empleado int(11) [ note: "fk de t_empleados ", not null]
@@ -250,7 +250,7 @@ rec_fecha_agregado datetime
 // para t_matricula
 ref: t_matricula.matr_curso > t_curso.id_curso
 ref: t_matricula.matr_grado > t_grado.id_grado
-// ref: t_matricula.id_documento > t_estudiantes.id_docuestudiante
+ref: t_matricula.id_documento > t_estudiantes.id_docuestudiante
 
 // para t_actividad
 ref: t_actividad.id_rel_empleado_asignatura_curso > t_rel_empleado_asignatura_curso.id_rel_empleado_asignatura_curso
@@ -274,7 +274,7 @@ ref: t_acudientes.acud_rol > t_rol.id_rol
 // para t_estudiante
 
 ref: t_estudiantes.estu_acudiente > t_acudientes.id_documento_acudiente
-ref: t_estudiantes.id_docuestudiante > t_matricula.id_documento
+// ref: t_estudiantes.id_docuestudiante > t_matricula.id_documento
 ref: t_estudiantes.estu_rol > t_rol.id_rol
 // para t_informe_caleficaciones
 
