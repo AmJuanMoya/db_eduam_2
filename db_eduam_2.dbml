@@ -1,0 +1,283 @@
+// Eduam DB_2
+Project eduam{
+database_type: "MySQL"
+}
+
+// Datos enum'erados
+
+enum tipo_recurso{
+  "PDF"
+  "DOC"
+  "TXT"
+  "XLSX"
+  "CSV"
+  "PPT"
+
+}
+enum tipo_documento {
+  "CC"
+  "TI"
+  "CE"  
+}
+
+enum categoria_actividad{
+  "Taller"
+  "Tarea"
+  "Evaluacion"
+  "Actividad en Grupo" 
+}
+
+enum estado_actividad {
+  "Asignada"
+  "Entregada"
+  "Calificada"
+  "Fuera de Tiempo"    
+}
+
+enum estado_informe_calificaciones {
+  "Aprobada"
+  "Desaprobada"
+  "Pendiente"      
+}  
+
+enum persona_genero { 
+  "MASCULINO"
+  "FEMENINO"
+  "OTRO" 
+}
+
+enum estudiante_estado {
+  "Activo"
+  "Bloqueado"
+  "Pendiente"
+  "Inactivo"
+  "Condicionado"
+}
+
+enum  empleado_estado{
+  "Activo"
+  "Bloqueado"
+  "Pendiente"
+  "Inactivo"
+}
+
+enum matricula_estado{
+  "Activa"
+  "Condicionada"
+  "Cancelada"
+  "Pendiente"      
+}
+
+
+enum jornada{
+"Jornada Tarde"
+"Jornada Mañana" 
+}
+
+
+enum acudiente_parentesco {
+ "Padre"
+ "Madre"
+ "Abuelo"
+ "Otro"
+}
+
+
+table t_matricula{
+  
+  id_documento int(10) [ not null]
+  matr_anio datetime [not null]
+  matr_grado int(11) [ not null]
+
+  matr_repite bool [ not null]
+  matr_traslado  bool[not null]
+  matr_estado matricula_estado [not null]
+  matr_observaciones text
+  matr_jornada jornada   [not null]
+  matr_curso int(11) [note: "fk a t_curso"] 
+
+indexes { 
+  (id_documento, matr_anio, matr_grado) [pk] }
+
+note: "ejemplo de nota"
+  
+}
+
+
+table t_estudiantes{
+id_docuestudiante int(11) [pk, not null]
+estu_nombre varchar(200) [not null]
+estu_apellido varchar(200) [not null]
+estu_edad int(10) [not null]
+estu_genero persona_genero [not null]
+estu_tipo_documento tipo_documento [not null]
+estu_estado estudiante_estado [not null]
+estu_observaciones text
+est_correo varchar(255)
+est_contrasena varchar(255) [not null]
+estu_rol int(11)  [note: "fk de t_roles", not null]
+estu_acudiente int(11) [note: "fk pero tambien pk"]
+
+
+}
+
+table t_acudientes{
+id_documento_acudiente int(11) [pk, not null]
+
+acud_nombres varchar(200)
+acud_apellidos varchar(200)
+acud_parentesco acudiente_parentesco
+acud_telefono int(10)
+acud_correo varchar(255)
+acud_direccion varchar(255)
+acud_tipo_documento tipo_documento
+acud1_documento int(11)
+acud1_nombres varchar(200)
+acud1_apellidos varchar(200)
+acud_rol int(11)  [note: "fk de t_roles"]
+
+}
+
+table t_empleados{  
+id_documento_empleado int(11) [pk, not null]
+empl_tipo_documento tipo_documento
+empl_nombre varchar(200) [not null]
+empl_apellido varchar(200) [not null]
+empl_celular int(10)
+empl_genero persona_genero [not null]
+empl_direccion varchar (200) [not null]
+empl_persona_contacto varchar (200) 
+empl_celular_persona_contacto int (10)
+empl_contrasena varchar(255) [not null]
+empl_correo varchar(255) [not null]
+empl_estado  empleado_estado [not null]
+empl_especialidad int(11)  [ note: "fk de t_especialidad"]
+empl_rol int(11)  [note: "fk de t_roles", not null]
+
+} 
+
+
+
+table t_curso{
+id_curso int(11) [pk, increment, not null]
+curso_jornada jornada
+id_curso_grado int(11) [ note: "fk de t_grado"]
+curso_docente_director int(11) [ note: "fk de t_empleados"]
+}
+
+table t_grado{
+  id_grado int(11) [pk, increment, not null]
+  grad_nombre varchar(100)
+}
+
+table t_rel_empleado_asignatura_curso{
+id_rel_empleado_asignatura_curso int(11) [pk, not null]
+id_asignatura int(11) [ note: "fk de t_asignatura", not null]
+id_curso  int(11) [ note: "fk de t_curso", not null]
+id_documento_empleado int(11) [ note: "fk de t_empleados ", not null]
+
+}
+
+table t_actividad{
+id_actividad int(11) [pk, increment, not null]
+act_estado estado_actividad [not null]
+act_fecha_asignacion datetime 
+act_fecha_entrega datetime
+act_nombre varchar(200) [not null]
+act_descripcion text
+act_id_recurso int(11)
+// act_nota decimal(2,1)
+act_categoria categoria_actividad [not null]
+url_actividad text
+id_rel_empleado_asignatura_curso int(11) [ not null, note: "fk de t_rel_empleado_asignatura_curso " ]
+}
+
+table t_informe_calificaciones{
+id_informe_calificacion int(11) [pk, increment, not null]
+infoc_estado estado_informe_calificaciones
+infoc_fecha_entrega datetime
+infoc_nota decimal (2,1)
+infoc_url_entrega text
+infoc_observaciones_docente text
+id_rel_empleado_asignatura_curso int(11) [ note: "fk de t_rel_empleado_asignatura_curso "]
+infoc_id_documento_estudiante int(11) [ note: "fk de t_estudiante "]
+}
+
+
+
+table t_especialidad{
+id_especialidad int(11) [pk, increment, not null]
+esp_descripcion varchar(200) [not null]
+
+}
+
+
+table t_asignatura{
+id_asignatura int(11) [pk, increment, not null]
+asig_nombre varchar(200) [not null]
+
+}
+
+table t_rol{
+id_rol int(11) [pk, not null]
+rol_descripcion varchar(200) [not null]
+
+}
+
+table t_recurso{
+id_recurso int(11) [pk, increment, not null]
+rec_nombre varchar (200) [not null]
+rec_descripcion text
+// Adicional:
+rec_tipo tipo_recurso
+rec_fecha_agregado datetime
+
+}
+
+// table t_login{
+//   id_documento int(11) [pk, not null]
+//   id_rol int(11) 
+//   log_password varchar(200) [not null]
+  
+// }
+
+// Relaciones
+
+
+// Para login
+
+
+// para t_matricula
+ref: t_matricula.matr_curso > t_curso.id_curso
+ref: t_matricula.matr_grado > t_grado.id_grado
+// ref: t_matricula.id_documento > t_estudiantes.id_docuestudiante
+
+// para t_actividad
+ref: t_actividad.id_rel_empleado_asignatura_curso > t_rel_empleado_asignatura_curso.id_rel_empleado_asignatura_curso
+ref: t_actividad.act_id_recurso > t_recurso.id_recurso
+//  para t_rel_empleado_asignatura_curso
+ ref: t_rel_empleado_asignatura_curso.id_asignatura > t_asignatura.id_asignatura
+ ref: t_rel_empleado_asignatura_curso.id_curso > t_curso.id_curso
+ ref: t_rel_empleado_asignatura_curso.id_documento_empleado > t_empleados.id_documento_empleado
+
+// para t_curso
+ref: t_curso.id_curso_grado > t_grado.id_grado
+ref: t_curso.curso_docente_director > t_empleados.id_documento_empleado
+
+// Para t_empleado
+ref: t_empleados.empl_rol > t_rol.id_rol
+ref: t_empleados.empl_especialidad > t_especialidad.id_especialidad
+
+// para t_acudientes
+ref: t_acudientes.acud_rol > t_rol.id_rol
+
+// para t_estudiante
+
+ref: t_estudiantes.estu_acudiente > t_acudientes.id_documento_acudiente
+ref: t_estudiantes.id_docuestudiante > t_matricula.id_documento
+ref: t_estudiantes.estu_rol > t_rol.id_rol
+// para t_informe_caleficaciones
+
+ref: t_informe_calificaciones.infoc_id_documento_estudiante > t_estudiantes.id_docuestudiante
+ref: t_informe_calificaciones.id_rel_empleado_asignatura_curso > t_rel_empleado_asignatura_curso.id_rel_empleado_asignatura_curso
+
