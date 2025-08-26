@@ -89,7 +89,7 @@ table t_matricula{
   matr_anio datetime [not null]
   matr_grado int(11) [ not null]
 
-  matr_repite boollean [ not null]
+  matr_repite boolean [ not null]
   matr_traslado  boolean [not null]
   matr_estado matricula_estado [not null]
   matr_observaciones text
